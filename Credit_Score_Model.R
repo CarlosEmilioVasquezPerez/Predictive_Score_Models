@@ -8,7 +8,7 @@ library(dplyr)
 library(randomForest)
 
 ###############ORCL#################
-drv <- dbDriver("Oracle")
+drv <- dbDriver("orcl")
 host <- "host"
 port <- "port"
 sid <- "orcl"
