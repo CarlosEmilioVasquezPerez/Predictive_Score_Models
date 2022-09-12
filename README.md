@@ -7,6 +7,3 @@
 #12 months of default). The random forest (not in this sample) gives a higher gini, but an adjustment of 50-50 has to be made in order to make 
 #a Distribution Table with probabilites that makes better sense.
 #This script uses oracle connection to import and extract data.
-
-#The script of transaction_fraud_model was used to score future transactions (approved and denied) as fraud.
-#This script uses NoSQL to import and extract data.
