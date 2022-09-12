@@ -27,7 +27,7 @@ where filter = filter
                             ")
 MAIN <- fetch(MAIN)
 
-Nombre_Segmento<-'Name'
+Segment<-'Name'
 
 #-----------------------------------------------------------------------------
 #-------------------------------Base------------------------------------------
@@ -36,29 +36,29 @@ Nombre_Segmento<-'Name'
 Tabla<- MAIN
 #Tabla<- filter(MAIN,SCORE_TU>1)
 
-Tabla_Justa<- data.frame(
+df<- data.frame(
   Tabla$variable1
   ,Tabla$variable2
   ,Tabla$variable3
   ,Tabla$default)
 
-names(Tabla_Justa) <- gsub("Tabla.", "", names(Tabla_Justa), fixed = TRUE)
+names(df) <- gsub("Tabla.", "", names(df), fixed = TRUE)
 
 #-----------------------------------------------------------------------------
 #-----------------------------Partition---------------------------------------
 #-----------------------------------------------------------------------------
 
-dt_list = split_df(Tabla_Justa, y="default", ratio = 0.8, seed = 1234)
+dt_list = split_df(df, y="default", ratio = 0.8, seed = 1234)
 train = dt_list$train; test = dt_list$test;
 
 #-----------------------------------------------------------------------------
 #------------------------- Treatment of WOE ----------------------------------
 #-----------------------------------------------------------------------------
 
-breaks_adj = lapply(Tabla_Justa, function(x) as.character(unique(x)))
+breaks_adj = lapply(df, function(x) as.character(unique(x)))
 breaks_adj = breaks_adj[-length((breaks_adj))]
 
-bins = woebin(Tabla_Justa, y="default",stop_limit = 0, bin_num_limit = 15, breaks_list = breaks_adj)
+bins = woebin(df, y="default",stop_limit = 0, bin_num_limit = 15, breaks_list = breaks_adj)
 
 train_woe = woebin_ply(train, bins)
 test_woe = woebin_ply(test, bins)
@@ -97,19 +97,19 @@ perf_psi(
 #-----------------------------------------------------------------------------
 
 #--- Final Table -----
-Datos_Total_score = rbind(#train_score, 
+dfs = rbind(#train_score, 
   test_score)
-Datos_Total = rbind(#train, 
+dft = rbind(#train, 
   test)
 
-distribucion<-gains_table(Datos_Total_score,Datos_Total$default,bin_num = 20,bin_type = 'freq')
+distribucion<-gains_table(dfs,dft$default,bin_num = 20,bin_type = 'freq')
 Cards<- data.frame()
 for (i in (2:length(card))) {
   data_temp<-data.frame(card[[i]]$variable,card[[i]]$bin,card[[i]]$points)
   Cards<-rbind(Cards,card[[i]]) 
 }
 
-SCORE_MARCA_DF<- data.frame('score'=Datos_Total_score$score,'default'=Datos_Total$default)
+sdf<- data.frame('score'=dfs$score,'default'=dft$default)
 
 #Partition of data in 0s and 1s to make a 50/50 balance
 set.seed(45321)
